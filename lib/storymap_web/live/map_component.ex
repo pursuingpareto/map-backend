@@ -1,6 +1,7 @@
 defmodule StorymapWeb.Live.MapComponent do
   use StorymapWeb, :live_component
   alias MapLibre
+  alias Storymap.Pins
 
   @fill_colour "#ffa8db"
 
@@ -30,7 +31,12 @@ defmodule StorymapWeb.Live.MapComponent do
       )
       |> MapLibre.to_spec()
 
-    {:ok, push_event(socket, "map:#{socket.id}:init", %{"ml" => ml})}
+    pins = Pins.list_pins()
+    pin_coords = Enum.map(pins, fn pin -> %{id: pin.id, title: pin.title, lat: pin.latitude, lng: pin.longitude} end)
+
+    socket = push_event(socket, "map:#{socket.id}:init", %{"ml" => ml})
+    socket = push_event(socket, "map:#{socket.id}:pins", %{"pins" => pin_coords})
+    {:ok, socket}
   end
 
   def handle_event("add_country", %{"country" => country}, socket) do
