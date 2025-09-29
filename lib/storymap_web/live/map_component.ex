@@ -22,13 +22,6 @@ defmodule StorymapWeb.Live.MapComponent do
 
     ml =
       MapLibre.new(style: :street)
-      |> MapLibre.add_geocode_source("poland", "Poland", :country)
-      |> MapLibre.add_layer(
-        id: "poland",
-        source: "poland",
-        type: :fill,
-        paint: [fill_color: @fill_colour, fill_opacity: 1]
-      )
       |> MapLibre.to_spec()
 
     pins = Pins.list_pins()
