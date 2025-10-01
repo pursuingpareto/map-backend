@@ -1,5 +1,39 @@
 # Storymap
 
+## Prerequisites (Ubuntu)
+
+1. **Install Elixir**: Follow the [official installation guide](https://elixir-lang.org/install.html)
+
+2. **Install PostgreSQL**:
+   ```bash
+   sudo apt install postgresql
+   sudo systemctl start postgresql
+   ```
+
+3. **Set up PostgreSQL user**:
+   ```bash
+   sudo -u postgres psql
+   ```
+   Then in the PostgreSQL prompt:
+   ```sql
+   ALTER USER postgres WITH PASSWORD 'postgres';
+   \q
+   ```
+
+4. **Install inotify-tools** (for file watching during development):
+   ```bash
+   sudo apt-get install inotify-tools
+   ```
+
+5. **Install Node.js dependencies**:
+   ```bash
+   cd assets
+   npm install
+   cd ..
+   ```
+
+## Setup
+
 To start your Phoenix server:
 
 * Run `mix setup` to install and setup dependencies
