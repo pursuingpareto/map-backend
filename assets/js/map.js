@@ -58,7 +58,7 @@ const Map = {
         this.modal.style.justifyContent = 'center';
         this.modal.style.zIndex = '1000';
         this.modal.innerHTML = `
-            <div style="background: white; padding: 2em; border-radius: 8px; min-width: 300px; box-shadow: 0 2px 16px #0002;">
+            <div class="pin-modal-content" style="padding: 2em; border-radius: 8px; min-width: 300px; box-shadow: 0 2px 16px rgba(0,0,0,0.1);">
                 <h2 style="margin-bottom: 1em;">Add Pin</h2>
                 <input id="pin-title" type="text" placeholder="Title" style="width: 100%; margin-bottom: 1em; padding: 0.5em;" />
                 <div style="display: flex; gap: 1em; justify-content: flex-end;">

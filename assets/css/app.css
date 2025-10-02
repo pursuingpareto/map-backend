@@ -103,4 +103,48 @@
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
+/* Fix MapLibre popup contrast to adapt to browser theme */
+.maplibregl-popup-content {
+  background: var(--color-base-100) !important;
+  color: var(--color-base-content) !important;
+  border: 1px solid var(--color-base-300) !important;
+}
+
+.maplibregl-popup-content div {
+  color: var(--color-base-content) !important;
+}
+
+.maplibregl-popup-close-button {
+  color: var(--color-base-content) !important;
+  background: var(--color-base-100) !important;
+  border: 1px solid var(--color-base-300) !important;
+}
+
+/* Pin modal content to adapt to browser theme */
+.pin-modal-content {
+  background: var(--color-base-100) !important;
+  color: var(--color-base-content) !important;
+}
+
+.pin-modal-content h2 {
+  color: var(--color-base-content) !important;
+}
+
+.pin-modal-content input {
+  background: var(--color-base-100) !important;
+  color: var(--color-base-content) !important;
+  border: 1px solid var(--color-base-300) !important;
+}
+
+.pin-modal-content input::placeholder {
+  color: var(--color-base-content);
+  opacity: 0.6;
+}
+
+.pin-modal-content button {
+  background: var(--color-base-100) !important;
+  color: var(--color-base-content) !important;
+  border: 1px solid var(--color-base-300) !important;
+}
+
 /* This file is for your main application CSS */
