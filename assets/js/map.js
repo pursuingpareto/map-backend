@@ -17,6 +17,17 @@ const Map = {
                 }
             });
             this.props.map.on('click', (e) => {
+                // Prevent modal if clicking on a marker
+                if (e.originalEvent && e.originalEvent.target) {
+                    // maplibre-gl markers have class 'maplibregl-marker' or are inside such an element
+                    let el = e.originalEvent.target;
+                    while (el) {
+                        if (el.classList && el.classList.contains('maplibregl-marker')) {
+                            return;
+                        }
+                        el = el.parentElement;
+                    }
+                }
                 this.clickedLngLat = e.lngLat;
                 this.showPinModal();
             });
