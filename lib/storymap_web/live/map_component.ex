@@ -7,7 +7,7 @@ defmodule StorymapWeb.Live.MapComponent do
 
   def render(assigns) do
     ~H"""
-      <div style="width:100%; height: 500px" id="map" phx-hook="Map" phx-update="ignore" data-id={@id}/>
+      <div style="width:100%; height: 100vh" id="map" phx-hook="Map" phx-update="ignore" data-id={@id}/>
     """
   end
 

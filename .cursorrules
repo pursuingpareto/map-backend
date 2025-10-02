@@ -1,0 +1,10 @@
+Please always reference the project guidelines in AGENTS.md when working on this Phoenix application. Follow all the guidelines specified there, including:
+
+- Phoenix v1.8 guidelines (LiveView templates, layouts, authentication)
+- Elixir best practices (list access, variable binding, etc.)
+- Ecto guidelines (preloading associations, changesets)
+- Phoenix HTML/HEEx guidelines (templates, forms, components)
+- LiveView guidelines (streams, testing, form handling)
+- Authentication flow and routing guidelines
+
+Always follow the specific patterns and conventions outlined in AGENTS.md.
