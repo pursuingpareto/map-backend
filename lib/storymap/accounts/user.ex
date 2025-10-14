@@ -9,6 +9,8 @@ defmodule Storymap.Accounts.User do
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
 
+    has_many :pins, Storymap.Pins.Pin
+
     timestamps(type: :utc_datetime)
   end
 

@@ -27,7 +27,19 @@ defmodule StorymapWeb.Router do
   scope "/api", StorymapWeb do
     pipe_through :api
 
-    resources "/pins", PinController
+    # Public read operations
+    get "/pins", PinController, :index
+    get "/pins/:id", PinController, :show
+  end
+
+  scope "/api", StorymapWeb do
+    pipe_through [:api, :fetch_session, :fetch_current_scope_for_user, :require_authenticated_user]
+
+    # Authenticated write operations
+    post "/pins", PinController, :create
+    put "/pins/:id", PinController, :update
+    patch "/pins/:id", PinController, :update
+    delete "/pins/:id", PinController, :delete
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

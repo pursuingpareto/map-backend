@@ -42,16 +42,17 @@ defmodule Storymap.Pins do
 
   ## Examples
 
-      iex> create_pin(%{field: value})
+      iex> create_pin(%{field: value}, user_id)
       {:ok, %Pin{}}
 
-      iex> create_pin(%{field: bad_value})
+      iex> create_pin(%{field: bad_value}, user_id)
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_pin(attrs) do
+  def create_pin(attrs, user_id) do
+    attrs_with_user = Map.put(attrs, "user_id", user_id)
     %Pin{}
-    |> Pin.changeset(attrs)
+    |> Pin.changeset(attrs_with_user)
     |> Repo.insert()
   end
 

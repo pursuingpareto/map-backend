@@ -12,7 +12,9 @@ defmodule StorymapWeb.PinController do
   end
 
   def create(conn, %{"pin" => pin_params}) do
-    with {:ok, %Pin{} = pin} <- Pins.create_pin(pin_params) do
+    user_id = conn.assigns.current_scope.user.id
+
+    with {:ok, %Pin{} = pin} <- Pins.create_pin(pin_params, user_id) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/pins/#{pin}")
