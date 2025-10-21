@@ -6,6 +6,8 @@ const Map = {
         this.mapLoaded = false;
         this.modal = null;
         this.clickedLngLat = null;
+        this.markers = []; // Custom array to manage markers
+
         this.handleEvent(`map:${this.props.id}:init`, ({ ml }) => {
             const map = {container: "map", style: ml}
             this.props.map = new maplibregl.Map(map);
@@ -65,6 +67,8 @@ const Map = {
               .setLngLat(lngLat)
               .setPopup(popup)
               .addTo(this.props.map);
+
+            this.markers.push({ id: pin.id, marker }); // Add marker to custom array
 
             popup.on('open', () => {
                 console.log("Popup opened for pin:", pin);
@@ -174,11 +178,26 @@ const Map = {
             body: JSON.stringify({ pin: { title } })
         }).then(res => res.json())
           .then(data => {
-              this.closePinModal();
               console.log('Pin updated:', data);
-              // Optionally, update the pin on the map immediately
-              pin.title = title;
-              this.addPins([pin]);
+              pin.title = title; // Update the pin's title locally
+
+              // Update the popup content
+              const markerObj = this.markers.find(m => m.id === pin.id);
+              if (markerObj) {
+                  markerObj.marker.getPopup().setHTML(`
+                    <div>
+                        <h3>${pin.title}</h3>
+                        ${pin.is_owner ? `
+                            <div style="margin-top: 0.5em;">
+                                <button id="edit-pin-${pin.id}" style="margin-right: 0.5em; padding: 0.3em 0.6em; background: #38a169; color: white; border: none; border-radius: 4px;">Edit</button>
+                                <button id="delete-pin-${pin.id}" style="padding: 0.3em 0.6em; background: #e53e3e; color: white; border: none; border-radius: 4px;">Delete</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                  `);
+              }
+
+              this.closePinModal();
           });
     },
 
@@ -188,10 +207,16 @@ const Map = {
             method: 'DELETE'
         }).then(res => {
             if (res.ok) {
-                this.closePinModal();
                 console.log('Pin deleted:', pin);
-                // Optionally, remove the pin from the map immediately
-                this.props.map.removeLayer(pin.id);
+
+                // Remove the pin from the map
+                const markerIndex = this.markers.findIndex(m => m.id === pin.id);
+                if (markerIndex !== -1) {
+                    this.markers[markerIndex].marker.remove();
+                    this.markers.splice(markerIndex, 1); // Remove from custom array
+                }
+
+                this.closePinModal();
             }
         });
     },
