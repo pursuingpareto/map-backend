@@ -15,7 +15,7 @@ defmodule Storymap.PinsFixtures do
         longitude: 120.5,
         title: "some title"
       })
-      |> Storymap.Pins.create_pin()
+      |> Storymap.Pins.create_pin(1)
 
     pin
   end

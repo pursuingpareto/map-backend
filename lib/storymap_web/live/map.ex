@@ -3,8 +3,10 @@ defmodule StorymapWeb.Live.Map do
 
   @spec render(any()) :: Phoenix.LiveView.Rendered.t()
   def render(assigns) do
+    user_id = assigns.current_scope.user.id
+    assigns = assign(assigns, :user_id, user_id)
     ~H"""
-    <.live_component module={StorymapWeb.Live.MapComponent} id="visited-countries-map"/>
+    <.live_component user_id={@user_id} module={StorymapWeb.Live.MapComponent} id="visited-countries-map"/>
     """
   end
 

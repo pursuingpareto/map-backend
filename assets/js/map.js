@@ -44,7 +44,59 @@ const Map = {
         });
     },
 
-    showPinModal() {
+    addPins(pins) {
+        console.log("addPins called with pins:", pins);
+        pins.forEach(pin => {
+            console.log("Adding pin to map:", pin);
+            const lngLat = [pin.lng, pin.lat];
+            const popup = new maplibregl.Popup().setHTML(`
+                <div>
+                    <h3>${pin.title}</h3>
+                    ${pin.is_owner ? `
+                        <div style="margin-top: 0.5em;">
+                            <button id="edit-pin-${pin.id}" style="margin-right: 0.5em; padding: 0.3em 0.6em; background: #38a169; color: white; border: none; border-radius: 4px;">Edit</button>
+                            <button id="delete-pin-${pin.id}" style="padding: 0.3em 0.6em; background: #e53e3e; color: white; border: none; border-radius: 4px;">Delete</button>
+                        </div>
+                    ` : ''}
+                </div>
+              `);
+
+            const marker = new maplibregl.Marker()
+              .setLngLat(lngLat)
+              .setPopup(popup)
+              .addTo(this.props.map);
+
+            popup.on('open', () => {
+                console.log("Popup opened for pin:", pin);
+                const editButton = document.getElementById(`edit-pin-${pin.id}`);
+                const deleteButton = document.getElementById(`delete-pin-${pin.id}`);
+
+                if (editButton) {
+                    console.log("Attaching edit listener for pin:", pin);
+                    editButton.onclick = (e) => {
+                        e.stopPropagation(); // Prevent map click event
+                        console.log("Edit button clicked for pin:", pin);
+                        this.showPinModal(pin);
+                    };
+                } else {
+                    console.warn("Edit button not found for pin:", pin);
+                }
+
+                if (deleteButton) {
+                    console.log("Attaching delete listener for pin:", pin);
+                    deleteButton.onclick = (e) => {
+                        e.stopPropagation(); // Prevent map click event
+                        console.log("Delete button clicked for pin:", pin);
+                        this.deletePin(pin);
+                    };
+                } else {
+                    console.warn("Delete button not found for pin:", pin);
+                }
+            });
+        });
+    },
+
+    showPinModal(pin = null) {
         if (this.modal) return;
         this.modal = document.createElement('div');
         this.modal.style.position = 'fixed';
@@ -57,19 +109,30 @@ const Map = {
         this.modal.style.alignItems = 'center';
         this.modal.style.justifyContent = 'center';
         this.modal.style.zIndex = '1000';
+
+        const isEdit = !!pin;
+        const modalTitle = isEdit ? 'Edit Pin' : 'Add Pin';
+        const pinTitle = isEdit ? pin.title : '';
+        const isOwner = pin && pin.is_owner; // Check ownership
+
         this.modal.innerHTML = `
             <div class="pin-modal-content" style="padding: 2em; border-radius: 8px; min-width: 300px; box-shadow: 0 2px 16px rgba(0,0,0,0.1);">
-                <h2 style="margin-bottom: 1em;">Add Pin</h2>
-                <input id="pin-title" type="text" placeholder="Title" style="width: 100%; margin-bottom: 1em; padding: 0.5em;" />
+                <h2 style="margin-bottom: 1em;">${modalTitle}</h2>
+                <input id="pin-title" type="text" placeholder="Title" value="${pinTitle}" style="width: 100%; margin-bottom: 1em; padding: 0.5em;" />
                 <div style="display: flex; gap: 1em; justify-content: flex-end;">
                     <button id="pin-cancel" style="padding: 0.5em 1em;">Cancel</button>
-                    <button id="pin-save" style="padding: 0.5em 1em; background: #38a169; color: white; border: none; border-radius: 4px;">Save</button>
+                    ${isEdit && isOwner ? `<button id="pin-delete" style="padding: 0.5em 1em; background: #e53e3e; color: white; border: none; border-radius: 4px;">Delete</button>` : ''}
+                    <button id="pin-save" style="padding: 0.5em 1em; background: #38a169; color: white; border: none; border-radius: 4px;">${isEdit ? 'Save' : 'Add'}</button>
                 </div>
             </div>
         `;
+
         document.body.appendChild(this.modal);
         document.getElementById('pin-cancel').onclick = () => this.closePinModal();
-        document.getElementById('pin-save').onclick = () => this.savePin();
+        document.getElementById('pin-save').onclick = () => isEdit ? this.updatePin(pin) : this.savePin();
+        if (isEdit && isOwner) {
+            document.getElementById('pin-delete').onclick = () => this.deletePin(pin);
+        }
     },
 
     closePinModal() {
@@ -102,15 +165,37 @@ const Map = {
           });
     },
 
-    addPins(pins) {
-        pins.forEach(pin => {
-            const lngLat = [pin.lng, pin.lat];
-            const marker = new maplibregl.Marker()
-              .setLngLat(lngLat)
-              .setPopup(new maplibregl.Popup().setText(pin.title))
-              .addTo(this.props.map);
+    updatePin(pin) {
+        const title = document.getElementById('pin-title').value;
+        if (!title) return;
+        fetch(`/api/pins/${pin.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin: { title } })
+        }).then(res => res.json())
+          .then(data => {
+              this.closePinModal();
+              console.log('Pin updated:', data);
+              // Optionally, update the pin on the map immediately
+              pin.title = title;
+              this.addPins([pin]);
+          });
+    },
+
+    deletePin(pin) {
+        if (!confirm('Are you sure you want to delete this pin?')) return;
+        fetch(`/api/pins/${pin.id}`, {
+            method: 'DELETE'
+        }).then(res => {
+            if (res.ok) {
+                this.closePinModal();
+                console.log('Pin deleted:', pin);
+                // Optionally, remove the pin from the map immediately
+                this.props.map.removeLayer(pin.id);
+            }
         });
     },
+
 };
 
 export default Map;
