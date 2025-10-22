@@ -21,10 +21,7 @@ defmodule StorymapWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    live_session :map,
-      on_mount: [{StorymapWeb.UserAuth, :mount_current_scope}] do
-      live "/map", Live.Map
-    end
+    get "/map", MapController, :index
   end
 
   scope "/api", StorymapWeb do
@@ -33,6 +30,7 @@ defmodule StorymapWeb.Router do
     # Public read operations
     get "/pins", PinController, :index
     get "/pins/:id", PinController, :show
+    get "/map/style", MapController, :style
   end
 
   scope "/api", StorymapWeb do

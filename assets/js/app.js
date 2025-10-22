@@ -24,13 +24,13 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/storymap"
 import topbar from "../vendor/topbar"
-import Map from "./map"
+// React map is loaded dynamically below when #react-root is present
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, Map},
+  hooks: {...colocatedHooks},
 })
 
 // Show progress bar on live navigation and form submits
@@ -80,5 +80,11 @@ if (process.env.NODE_ENV === "development") {
 
     window.liveReloader = reloader
   })
+}
+
+// Conditionally mount React app on pages that include #react-root
+const reactRoot = document.getElementById("react-root")
+if (reactRoot) {
+  import("./react/main.tsx")
 }
 

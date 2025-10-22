@@ -20,7 +20,8 @@ defmodule StorymapWeb.PinJSON do
       id: pin.id,
       title: pin.title,
       latitude: pin.latitude,
-      longitude: pin.longitude
+      longitude: pin.longitude,
+      user_id: pin.user_id
     }
   end
 end
