@@ -160,12 +160,24 @@ const Map = {
             }})
         }).then(res => res.json())
           .then(data => {
+              console.log('Backend response for new pin:', data);
               this.closePinModal();
-              console.log('Pin saved:', data);
-              // Optionally, add the new pin to the map immediately
+
               if (data && data.data.id) {
-                  this.addPins([{ id: data.id, title, lat: data.data.latitude, lng: data.data.longitude }]);
+                  const newPin = {
+                      id: data.data.id,
+                      title,
+                      lat: data.data.latitude,
+                      lng: data.data.longitude,
+                      is_owner: data.data.is_owner !== undefined ? data.data.is_owner : true // Fallback to true
+                  };
+                  console.log('Adding new pin to map:', newPin);
+                  this.addPins([newPin]);
+              } else {
+                  console.error('Failed to create pin. Invalid response:', data);
               }
+          }).catch(error => {
+              console.error('Error creating pin:', error);
           });
     },
 

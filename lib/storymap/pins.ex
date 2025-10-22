@@ -60,8 +60,8 @@ defmodule Storymap.Pins do
   def create_pin(attrs, user_id) do
     attrs_with_user = Map.put(attrs, "user_id", user_id)
     %Pin{}
-    |> Pin.changeset(attrs_with_user)
-    |> Repo.insert()
+         |> Pin.changeset(attrs_with_user)
+         |> Repo.insert()
   end
 
   @doc """
