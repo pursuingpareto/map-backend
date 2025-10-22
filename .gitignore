@@ -35,3 +35,21 @@ storymap-*.tar
 npm-debug.log
 /assets/node_modules/
 
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Elixir LS
+/.elixir_ls/
+
+# TypeScript build info
+/assets/tsconfig.tsbuildinfo
+/assets/*.tsbuildinfo
+
+# JS package manager logs
+/assets/npm-debug.log*
+/assets/yarn-error.log*
+/assets/pnpm-debug.log*
+
