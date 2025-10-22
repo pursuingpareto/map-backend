@@ -18,6 +18,12 @@ This is a web application written using the Phoenix web framework.
 - If you override the default input classes (`<.input class="myclass px-2 py-1 rounded-lg">)`) class with your own values, no default classes are inherited, so your
 custom classes must fully style the input
 
+### Frontend Architecture
+
+This application uses a **hybrid architecture**:
+- **Phoenix LiveView** for most pages (auth, settings, etc.)
+- **React + TypeScript** for complex interactive pages (map interface)
+
 ### JS and CSS guidelines
 
 - **Use Tailwind CSS classes and custom CSS rules** to create polished, responsive, and visually stunning interfaces.
@@ -35,6 +41,20 @@ custom classes must fully style the input
   - You cannot reference an external vendor'd script `src` or link `href` in the layouts
   - You must import the vendor deps into app.js and app.css to use them
   - **Never write inline <script>custom js</script> tags within templates**
+
+### React + TypeScript Guidelines
+
+- **React pages** are mounted conditionally via `#react-root` div in controller templates
+- **Always** use TypeScript for React components with proper type definitions
+- **Always** use Tailwind classes in React components, never inline styles
+- **Always** pass initial props via `data-*` attributes on the mount container
+- **Always** use the existing API endpoints for data fetching; don't duplicate backend logic
+- **Always** handle authentication state properly (check `is_owner` flags, handle 401s)
+- **Always** use functional components with hooks (useState, useEffect, useCallback, useMemo)
+- **Always** structure React code in modular files: `components/`, `api/`, `types.ts`
+- **Always** use proper TypeScript types for API responses and component props
+- **Never** mix React state management with Phoenix LiveView state
+- **Never** bypass CSRF protection in API calls; always include the token
 
 ### UI/UX & design guidelines
 

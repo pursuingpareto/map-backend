@@ -6,5 +6,22 @@ Please always reference the project guidelines in AGENTS.md when working on this
 - Phoenix HTML/HEEx guidelines (templates, forms, components)
 - LiveView guidelines (streams, testing, form handling)
 - Authentication flow and routing guidelines
+- React + TypeScript guidelines for frontend components
+- Hybrid architecture patterns (LiveView + React)
 
 Always follow the specific patterns and conventions outlined in AGENTS.md.
+
+## Frontend Architecture Notes
+
+This application uses a hybrid approach:
+- **Phoenix LiveView** for most pages (auth, settings, forms)
+- **React + TypeScript** for complex interactive pages (map interface)
+
+When working on React components:
+- Use TypeScript with proper type definitions
+- Follow Tailwind CSS guidelines (no inline styles)
+- Mount React conditionally via `#react-root` div
+- Pass props via `data-*` attributes
+- Use existing API endpoints, don't duplicate backend logic
+- Handle authentication properly (check `is_owner` flags)
+- Structure code modularly: `components/`, `api/`, `types.ts`
