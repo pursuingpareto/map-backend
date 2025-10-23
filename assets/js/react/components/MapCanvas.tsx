@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react"
+import React, { useEffect, useRef } from "react"
 import maplibregl, { Map as MLMap, Marker, Popup } from "maplibre-gl"
 import type { Pin } from "../types"
 
@@ -14,7 +14,6 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
   const mapRef = useRef<MLMap | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const markersRef = useRef<Map<number, Marker>>(new Map())
-  const [mapReady, setMapReady] = useState(false)
 
   // Initialize map once
   useEffect(() => {
@@ -26,14 +25,6 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
       if (!isMounted) return
       const map = new maplibregl.Map({ container: containerRef.current!, style })
       mapRef.current = map
-      
-      // Wait for map to be ready before setting mapReady
-      map.on('load', () => {
-        if (isMounted) {
-          setMapReady(true)
-        }
-      })
-      
       map.on("click", (e) => {
         const el = e.originalEvent?.target as HTMLElement | undefined
         // ignore clicks on markers
@@ -53,7 +44,6 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
       mapRef.current = null
       markersRef.current.forEach((m) => m.remove())
       markersRef.current.clear()
-      setMapReady(false)
     }
   }, [styleUrl, onMapClick])
 
@@ -88,9 +78,7 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
   // Sync markers with pins
   useEffect(() => {
     const map = mapRef.current
-    if (!map || !mapReady) {
-      return
-    }
+    if (!map) return
 
     const known = markersRef.current
     const nextIds = new Set(pins.map((p) => p.id))
@@ -124,7 +112,7 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
         popup?.setHTML(popupHtml)
       }
     })
-  }, [pins, mapReady])
+  }, [pins])
 
   return <div ref={containerRef} id="map" className="w-full h-[100vh]" />
 }

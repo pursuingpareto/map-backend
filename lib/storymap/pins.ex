@@ -25,7 +25,7 @@ defmodule Storymap.Pins do
   def list_pins(current_user_id) do
     Repo.all(from p in Pin, select: %{id: p.id, title: p.title, latitude: p.latitude, longitude: p.longitude, user_id: p.user_id})
     |> Enum.map(fn pin ->
-      Map.put(pin, :is_owner, current_user_id != nil && pin.user_id == current_user_id)
+      Map.put(pin, :is_owner, pin.user_id == current_user_id)
     end)
   end
 

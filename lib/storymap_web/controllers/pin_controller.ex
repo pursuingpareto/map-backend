@@ -7,8 +7,7 @@ defmodule StorymapWeb.PinController do
   action_fallback StorymapWeb.FallbackController
 
   def index(conn, _params) do
-    current_user_id = get_in(conn.assigns, [:current_scope, :user, :id])
-    pins = Pins.list_pins(current_user_id)
+    pins = Pins.list_pins()
     render(conn, :index, pins: pins)
   end
 
