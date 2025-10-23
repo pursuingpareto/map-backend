@@ -6,8 +6,8 @@ type Props = {
   styleUrl: string
   pins: Pin[]
   onMapClick: (lng: number, lat: number) => void
-  onEdit: (pin: Pin) => void
-  onDelete: (pin: Pin) => void
+  onEdit: (pinId: number) => void
+  onDelete: (pinId: number) => void
 }
 
 export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete }: Props) {
@@ -47,6 +47,34 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
     }
   }, [styleUrl, onMapClick])
 
+  // Set up event delegation for popup buttons
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    const handlePopupClick = (e: Event) => {
+      const target = e.target as HTMLElement
+      if (target.matches('[data-pin-action]')) {
+        e.stopPropagation()
+        const action = target.dataset.pinAction
+        const pinId = parseInt(target.dataset.pinId || '0', 10)
+        
+        if (action === 'edit') {
+          onEdit(pinId)
+        } else if (action === 'delete') {
+          onDelete(pinId)
+        }
+      }
+    }
+
+    // Add event listener to map container for delegation
+    map.getContainer().addEventListener('click', handlePopupClick)
+
+    return () => {
+      map.getContainer().removeEventListener('click', handlePopupClick)
+    }
+  }, [onEdit, onDelete])
+
   // Sync markers with pins
   useEffect(() => {
     const map = mapRef.current
@@ -70,27 +98,21 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
         <div>
           <h3>${pin.title}</h3>
           ${pin.is_owner ? `<div style="margin-top: 0.5em;">
-            <button id="edit-pin-${pin.id}" style="margin-right: 0.5em; padding: 0.3em 0.6em; background: #38a169; color: white; border: none; border-radius: 4px;">Edit</button>
-            <button id="delete-pin-${pin.id}" style="padding: 0.3em 0.6em; background: #e53e3e; color: white; border: none; border-radius: 4px;">Delete</button>
+            <button data-pin-action="edit" data-pin-id="${pin.id}" style="margin-right: 0.5em; padding: 0.3em 0.6em; background: #38a169; color: white; border: none; border-radius: 4px;">Edit</button>
+            <button data-pin-action="delete" data-pin-id="${pin.id}" style="padding: 0.3em 0.6em; background: #e53e3e; color: white; border: none; border-radius: 4px;">Delete</button>
           </div>` : ""}
         </div>`
       if (!marker) {
         const popup = new Popup().setHTML(popupHtml)
         marker = new Marker().setLngLat([pin.longitude, pin.latitude]).setPopup(popup).addTo(map)
         known.set(pin.id, marker)
-        popup.on("open", () => {
-          const editBtn = document.getElementById(`edit-pin-${pin.id}`)
-          const delBtn = document.getElementById(`delete-pin-${pin.id}`)
-          if (editBtn) editBtn.onclick = (e) => { e.stopPropagation(); onEdit(pin) }
-          if (delBtn) delBtn.onclick = (e) => { e.stopPropagation(); onDelete(pin) }
-        })
       } else {
         // update popup if title changed
         const popup = marker.getPopup()
         popup?.setHTML(popupHtml)
       }
     })
-  }, [pins, onEdit, onDelete])
+  }, [pins])
 
   return <div ref={containerRef} id="map" className="w-full h-[100vh]" />
 }

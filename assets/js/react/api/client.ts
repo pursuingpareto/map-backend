@@ -9,6 +9,15 @@ async function jsonFetch<T>(url: string, init?: RequestInit): Promise<T> {
   return res.json() as Promise<T>
 }
 
+async function fetchRequest(url: string, init?: RequestInit): Promise<Response> {
+  const res = await fetch(url, init)
+  if (!res.ok) {
+    const text = await res.text().catch(() => "")
+    throw new Error(`HTTP ${res.status}: ${text}`)
+  }
+  return res
+}
+
 export function getPins(): Promise<{ data: Pin[] }> {
   return jsonFetch("/api/pins")
 }
@@ -38,7 +47,7 @@ export function updatePin(csrf: string | undefined, id: number, changes: UpdateP
 }
 
 export async function deletePin(csrf: string | undefined, id: number): Promise<void> {
-  await jsonFetch(`/api/pins/${id}`, {
+  await fetchRequest(`/api/pins/${id}`, {
     method: "DELETE",
     headers: {
       ...(csrf ? { "x-csrf-token": csrf } : {}),

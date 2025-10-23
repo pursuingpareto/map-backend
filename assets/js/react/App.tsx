@@ -28,17 +28,21 @@ export default function App({ userId, csrfToken, styleUrl = "/api/map/style" }: 
     setModal({ mode: "add", lng, lat })
   }, [])
 
-  const onEdit = useCallback((pin: Pin) => {
+  const onEdit = useCallback((pinId: number) => {
+    const pin = pins.find(p => p.id === pinId)
+    if (!pin) return
     setTitle(pin.title)
     setModal({ mode: "edit", pin })
-  }, [])
+  }, [pins])
 
-  const onDelete = useCallback(async (pin: Pin) => {
+  const onDelete = useCallback(async (pinId: number) => {
+    const pin = pins.find(p => p.id === pinId)
+    if (!pin) return
     if (!confirm("Are you sure you want to delete this pin?")) return
     await api.deletePin(csrfToken, pin.id)
     setPins((prev) => prev.filter((p) => p.id !== pin.id))
     setModal(null)
-  }, [csrfToken])
+  }, [csrfToken, pins])
 
   const onSave = useCallback(async () => {
     if (!modal) return
@@ -76,7 +80,7 @@ export default function App({ userId, csrfToken, styleUrl = "/api/map/style" }: 
           mode={modal.mode}
           onCancel={() => setModal(null)}
           onSave={onSave}
-          onDelete={modal.mode === "edit" ? () => onDelete(modal.pin) : undefined}
+          onDelete={modal.mode === "edit" ? () => onDelete(modal.pin.id) : undefined}
           canDelete={canDelete}
         />
       )}
