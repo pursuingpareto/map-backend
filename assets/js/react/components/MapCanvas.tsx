@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import maplibregl, { Map as MLMap, Marker, Popup } from "maplibre-gl"
 import type { Pin } from "../types"
 
@@ -14,6 +14,7 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
   const mapRef = useRef<MLMap | null>(null)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const markersRef = useRef<Map<number, Marker>>(new Map())
+  const [mapReady, setMapReady] = useState(false)
 
   // Initialize map once
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
         }
         onMapClick(e.lngLat.lng, e.lngLat.lat)
       })
+      setMapReady(true)
     }
     init()
 
@@ -44,13 +46,14 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
       mapRef.current = null
       markersRef.current.forEach((m) => m.remove())
       markersRef.current.clear()
+      setMapReady(false)
     }
   }, [styleUrl, onMapClick])
 
   // Set up event delegation for popup buttons
   useEffect(() => {
     const map = mapRef.current
-    if (!map) return
+    if (!map || !mapReady) return
 
     const handlePopupClick = (e: Event) => {
       const target = e.target as HTMLElement
@@ -73,12 +76,12 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
     return () => {
       map.getContainer().removeEventListener('click', handlePopupClick)
     }
-  }, [onEdit, onDelete])
+  }, [mapReady, onEdit, onDelete])
 
   // Sync markers with pins
   useEffect(() => {
     const map = mapRef.current
-    if (!map) return
+    if (!map || !mapReady) return
 
     const known = markersRef.current
     const nextIds = new Set(pins.map((p) => p.id))
@@ -112,7 +115,7 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
         popup?.setHTML(popupHtml)
       }
     })
-  }, [pins])
+  }, [pins, mapReady])
 
   return <div ref={containerRef} id="map" className="w-full h-[100vh]" />
 }
