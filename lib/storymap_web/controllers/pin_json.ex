@@ -15,13 +15,25 @@ defmodule StorymapWeb.PinJSON do
     %{data: data(pin)}
   end
 
+  defp data(pin) when is_map(pin) do
+    %{
+      id: pin.id || pin[:id],
+      title: pin.title || pin[:title],
+      latitude: pin.latitude || pin[:latitude],
+      longitude: pin.longitude || pin[:longitude],
+      user_id: pin.user_id || pin[:user_id],
+      is_owner: pin.is_owner || pin[:is_owner] || false
+    }
+  end
+
   defp data(%Pin{} = pin) do
     %{
       id: pin.id,
       title: pin.title,
       latitude: pin.latitude,
       longitude: pin.longitude,
-      user_id: pin.user_id
+      user_id: pin.user_id,
+      is_owner: false
     }
   end
 end
