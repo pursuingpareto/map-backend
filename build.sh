@@ -6,6 +6,9 @@ set -o errexit
 mix deps.get --only prod
 MIX_ENV=prod mix compile
 
+# Install npm dependencies
+cd assets && npm install && cd ..
+
 # Compile assets
 # Make sure tailwind and esbuild are installed
 MIX_ENV=prod mix assets.build
