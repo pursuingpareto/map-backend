@@ -16,5 +16,8 @@ config :swoosh, local: false
 # Do not print debug messages in production
 config :logger, level: :info
 
+config :storymap, Storymap.Mailer,
+  adapter: Resend.Swoosh.Adapter
+
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.

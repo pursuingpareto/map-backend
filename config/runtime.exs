@@ -55,6 +55,9 @@ if config_env() == :prod do
 
   config :storymap, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
+  config :storymap, Storymap.Mailer,
+    api_key: System.fetch_env!("RESEND_API_KEY")
+
   config :storymap, StorymapWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
