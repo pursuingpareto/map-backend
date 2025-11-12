@@ -8,7 +8,7 @@ import Config
 config :storymap, StorymapWeb.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json"
 
-config :storymap, Storymap.Endpoint,
+config :storymap, StorymapWeb.Endpoint,
   check_origin: ["https://mapgarden.net"]
 
 # Configures Swoosh API Client
