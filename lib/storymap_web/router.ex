@@ -20,7 +20,8 @@ defmodule StorymapWeb.Router do
   scope "/", StorymapWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    # / and /map serve the main map page
+    get "/", MapController, :index
     get "/map", MapController, :index
   end
 
