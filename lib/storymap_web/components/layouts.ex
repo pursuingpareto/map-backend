@@ -62,8 +62,8 @@ defmodule StorymapWeb.Layouts do
       </div>
     </header>
 
-    <main>
-      <div>
+    <main class="flex-1 h-full">
+      <div class="h-full">
         {render_slot(@inner_block)}
       </div>
     </main>

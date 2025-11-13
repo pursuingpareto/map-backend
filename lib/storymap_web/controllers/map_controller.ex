@@ -9,8 +9,9 @@ defmodule StorymapWeb.MapController do
 
   def style(conn, _params) do
     spec =
-      MapLibre.new(style: :street)
+      MapLibre.new(style: :terrain)
       |> MapLibre.to_spec()
+      |> Map.put("projection", %{"type" => "globe"})
 
     json(conn, spec)
   end

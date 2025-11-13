@@ -63,7 +63,7 @@ export default function App({ userId, csrfToken, styleUrl = "/api/map/style" }: 
   const canDelete = useMemo(() => modal && modal.mode === "edit" && modal.pin.is_owner, [modal]) as boolean | undefined
 
   return (
-    <div className="w-full h-[100vh]">
+    <div className="w-full h-full">
       {!loading && (
         <MapCanvas
           styleUrl={styleUrl}

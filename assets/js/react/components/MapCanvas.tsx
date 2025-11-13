@@ -24,7 +24,12 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
     const init = async () => {
       const style = await fetch(styleUrl).then((r) => r.json())
       if (!isMounted) return
-      const map = new maplibregl.Map({ container: containerRef.current!, style })
+      const map = new maplibregl.Map({ 
+        container: containerRef.current!, 
+        style,
+        center: [0, 0],
+        zoom: 2
+      })
       mapRef.current = map
       map.on("click", (e) => {
         const el = e.originalEvent?.target as HTMLElement | undefined
@@ -117,7 +122,7 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
     })
   }, [pins, mapReady])
 
-  return <div ref={containerRef} id="map" className="w-full h-[100vh]" />
+  return <div ref={containerRef} id="map" className="w-full h-full" />
 }
 
 
