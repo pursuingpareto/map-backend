@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import maplibregl, { Map as MLMap, Marker, Popup } from "maplibre-gl"
 import type { Pin } from "../types"
+import { MapLibreSearchControl } from "@stadiamaps/maplibre-search-box";
 
 type Props = {
   styleUrl: string
@@ -24,12 +25,23 @@ export default function MapCanvas({ styleUrl, pins, onMapClick, onEdit, onDelete
     const init = async () => {
       const style = await fetch(styleUrl).then((r) => r.json())
       if (!isMounted) return
+      const control = new MapLibreSearchControl({
+          onResultSelected: feature => {
+            // You can add code here to take some action when a result is selected.
+            console.log(feature.geometry.coordinates);
+          },
+          // You can also use our EU endpoint to keep traffic within the EU using the basePath option:
+          // baseUrl: "https://api-eu.stadiamaps.com",
+      });
       const map = new maplibregl.Map({ 
         container: containerRef.current!, 
         style,
         center: [0, 0],
         zoom: 2
       })
+      // The search control is implemented against a different maplibre-gl type instance;
+      // coerce it to the expected IControl to satisfy TypeScript.
+      map.addControl(control as unknown as maplibregl.IControl, "top-left");
       mapRef.current = map
       map.on("click", (e) => {
         const el = e.originalEvent?.target as HTMLElement | undefined

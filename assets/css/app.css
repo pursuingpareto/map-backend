@@ -3,6 +3,7 @@
 
 @import "tailwindcss" source(none);
 @import "maplibre-gl/dist/maplibre-gl.css";
+@import "./vendor/maplibre-search-box.css";
 @source "../css";
 @source "../js";
 @source "../../lib/storymap_web";

@@ -3,6 +3,7 @@ import MapCanvas from "./components/MapCanvas"
 import PinModal from "./components/PinModal"
 import type { NewPin, Pin, UpdatePin } from "./types"
 import * as api from "./api/client"
+import "@stadiamaps/maplibre-search-box/dist/maplibre-search-box.css";
 
 type Props = {
   userId?: number
